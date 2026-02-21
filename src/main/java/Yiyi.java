@@ -1,10 +1,9 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Yiyi {
     private static final String LINE = "____________________________________________________________";
-    private static final int MAX_TASKS = 100;
-    private static Task[] tasks = new Task[MAX_TASKS];
-    private static int TaskCounts = 0;
+    private static ArrayList<Task> tasks = new ArrayList<>();
     public static void main(String[] args) {
         greet();
         handleUserInput();
@@ -33,19 +32,21 @@ public class Yiyi {
                 if (line.equalsIgnoreCase("bye")) {
                 break;
                 }else if(line.equalsIgnoreCase("list")){
-                showTaskList();
+                    showTaskList();
                 }else if(line.startsWith("mark ")){
-                markTask(line);
+                    markTask(line);
                 }else if(line.startsWith("unmark ")){
-                unmarkTask(line);
-                }else if(line.startsWith("todo")){
-                addTodo(line);
+                    unmarkTask(line);
+                }else if(line.startsWith("delete ")){
+                    deleteTask(line);
+                } else if(line.startsWith("todo")){
+                    addTodo(line);
                 }else if(line.startsWith("deadline")){
-                addDeadline(line);
+                    addDeadline(line);
                 }else if(line.startsWith("event")){
-                addEvent(line);
+                    addEvent(line);
                 }else{
-                throw new YiyiException("I'm sorry, but I don't know what that mean.");
+                    throw new YiyiException("I'm sorry, but I don't know what that mean.");
                 }
             }catch(YiyiException e){
                 printError(e.getMessage());
@@ -62,10 +63,6 @@ public class Yiyi {
     }
 
     private static void addTodo(String line) throws YiyiException{
-        if(TaskCounts >= MAX_TASKS){
-            throw new YiyiException("Sorry, I can only store up to 100 tasks!");
-        }
-
         String description;
         if(line.equalsIgnoreCase("todo") || line.length() <= 4){
             description = "";
@@ -76,19 +73,15 @@ public class Yiyi {
             throw new YiyiException("The description of a Todo cannot be empty.");
         }
 
-        tasks[TaskCounts] = new Todo(description);
-        TaskCounts++;
+        Todo todo= new Todo(description);
+        tasks.add(todo);
         System.out.println(LINE);
-        System.out.println("Added Todo task: " + tasks[TaskCounts - 1]);
-        System.out.println("Now you have " + TaskCounts + " tasks in your list.");
+        System.out.println("Added Todo task: " + todo);
+        System.out.println("Now you have " + tasks.size() + " tasks in your list.");
         System.out.println(LINE);
     }
 
     private static void addDeadline (String line) throws YiyiException{
-        if(TaskCounts >= MAX_TASKS){
-            throw new YiyiException("Sorry, I can only store up to 100 tasks!");
-        }
-
         if(line.length() <= 8){
             throw new YiyiException("Please use the format: deadline <description> /by <date>");
         }
@@ -105,19 +98,15 @@ public class Yiyi {
         if (description.isEmpty() || by.isEmpty()){
             throw new YiyiException("Description and deadline cannot be empty.");
         }
-        tasks[TaskCounts] = new Deadline(description, by);
-        TaskCounts++;
+        Deadline deadline = new Deadline(description, by);
+        tasks.add(deadline);
         System.out.println(LINE);
-        System.out.println("Added Deadline task: " + tasks[TaskCounts - 1]);
-        System.out.println("Now you have " + TaskCounts + " tasks in your list.");
+        System.out.println("Added Deadline task: " + deadline);
+        System.out.println("Now you have " + tasks.size() + " tasks in your list.");
         System.out.println(LINE);
     }
 
     private static void addEvent(String line) throws YiyiException{
-        if(TaskCounts >= MAX_TASKS){
-            throw new YiyiException("Sorry, I can only store up to 100 tasks!");
-        }
-
         if(line.length() <= 5){
             throw new YiyiException("Please use the format: event <description> /from <start> /to <end>");
         }
@@ -140,23 +129,23 @@ public class Yiyi {
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()){
             throw new YiyiException("Description, start time and end time cannot be empty.");
         }
-        tasks[TaskCounts] = new Event(description, from, to);
-        TaskCounts++;
+        Event event = new Event(description, from, to);
+        tasks.add(event);
         System.out.println(LINE);
-        System.out.println("Added Event task: " + tasks[TaskCounts - 1]);
-        System.out.println("Now you have " + TaskCounts + " tasks in your list.");
+        System.out.println("Added Event task: " + event);
+        System.out.println("Now you have " + tasks.size() + " tasks in your list.");
         System.out.println(LINE);
     }
 
     private static void showTaskList(){
         System.out.println(LINE);
 
-        if(TaskCounts == 0){
+        if(tasks.isEmpty()){
             System.out.println("Your task list is empty!");
         }else{
             System.out.println("Here are the tasks in your list:");
-            for(int i = 0; i < TaskCounts; i++){
-                System.out.println((i + 1) + ". " + tasks[i]);
+            for(int i = 0; i < tasks.size(); i++){
+                System.out.println((i + 1) + ". " + tasks.get(i));
             }
         }
         System.out.println(LINE);
@@ -167,14 +156,14 @@ public class Yiyi {
         try {
             int taskNumber = Integer.parseInt(line.substring(5).trim());
 
-            if (taskNumber < 1 || taskNumber > TaskCounts) {
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
                 System.out.println(LINE);
                 System.out.println("Task number " + taskNumber + " does not exist!");
                 System.out.println(LINE);
                 return;
             }
 
-            Task task = tasks[taskNumber - 1];
+            Task task = tasks.get(taskNumber - 1);
             task.markAsDone();
 
             System.out.println(LINE);
@@ -190,14 +179,14 @@ public class Yiyi {
         try{
             int taskNumber = Integer.parseInt(line.substring(7).trim());
 
-            if (taskNumber < 1 || taskNumber > TaskCounts) {
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
                 System.out.println(LINE);
                 System.out.println("Task number " + taskNumber + " does not exist!");
                 System.out.println(LINE);
                 return;
             }
 
-            Task task = tasks[taskNumber - 1];
+            Task task = tasks.get(taskNumber - 1);
             task.markAsUndone();
 
             System.out.println(LINE);
@@ -206,6 +195,28 @@ public class Yiyi {
             System.out.println(LINE);
         } catch (NumberFormatException e){
             throw new YiyiException("Please enter a valid task number! Example: mark <task number>");
+        }
+    }
+
+    private static void deleteTask(String line) throws YiyiException
+    {
+        try{
+            int taskNumber = Integer.parseInt(line.substring(7).trim());
+
+            if(taskNumber < 1 || taskNumber > tasks.size()){
+                System.out.println(LINE);
+                System.out.println("Task number " + taskNumber + " does not exist!");
+                System.out.println(LINE);
+                return;
+            }
+            Task removedTask = tasks.remove(taskNumber - 1);
+            System.out.println(LINE);
+            System.out.println("Noted. I've removed this task:");
+            System.out.println("  " + removedTask);
+            System.out.println("Now you have " + tasks.size() + " tasks in the list");
+            System.out.println(LINE);
+        }catch (NumberFormatException e){
+            throw new YiyiException("Please enter a valid task number! Example: delete <task number>");
         }
     }
 }
