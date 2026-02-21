@@ -3,8 +3,16 @@ import java.util.Scanner;
 
 public class Yiyi {
     private static final String LINE = "____________________________________________________________";
-    private static ArrayList<Task> tasks = new ArrayList<>();
+    private static ArrayList<Task> tasks;
+
     public static void main(String[] args) {
+        try {
+            tasks = Storage.loadTasks();
+        } catch (Exception e) {
+            tasks = new ArrayList<>();
+            System.out.println("Could not load tasks from file. Starting with empty list.");
+        }
+
         greet();
         handleUserInput();
         bye();
@@ -28,29 +36,32 @@ public class Yiyi {
 
         while(true) {
             String line = in.nextLine().trim();
-            try{
+            try {
                 if (line.equalsIgnoreCase("bye")) {
-                break;
-                }else if(line.equalsIgnoreCase("list")){
+                    break;
+                } else if (line.equalsIgnoreCase("list")) {
                     showTaskList();
-                }else if(line.startsWith("mark ")){
+                } else if (line.startsWith("mark ")) {
                     markTask(line);
-                }else if(line.startsWith("unmark ")){
+                } else if (line.startsWith("unmark ")) {
                     unmarkTask(line);
-                }else if(line.startsWith("delete ")){
+                } else if (line.startsWith("delete ")) {    // FROM LEVEL-6: Delete feature
                     deleteTask(line);
-                } else if(line.startsWith("todo")){
+                } else if (line.startsWith("todo")) {
                     addTodo(line);
-                }else if(line.startsWith("deadline")){
+                } else if (line.startsWith("deadline")) {
                     addDeadline(line);
-                }else if(line.startsWith("event")){
+                } else if (line.startsWith("event")) {
                     addEvent(line);
-                }else{
+                } else {
                     throw new YiyiException("I'm sorry, but I don't know what that mean.");
                 }
-            }catch(YiyiException e){
+
+                Storage.saveTasks(tasks);
+
+            } catch (YiyiException e) {
                 printError(e.getMessage());
-            }catch(Exception e){
+            } catch (Exception e) {
                 printError("An unexpected error occurred: " + e.getMessage());
             }
         }
@@ -73,7 +84,7 @@ public class Yiyi {
             throw new YiyiException("The description of a Todo cannot be empty.");
         }
 
-        Todo todo= new Todo(description);
+        Todo todo = new Todo(description);
         tasks.add(todo);
         System.out.println(LINE);
         System.out.println("Added Todo task: " + todo);
@@ -81,7 +92,7 @@ public class Yiyi {
         System.out.println(LINE);
     }
 
-    private static void addDeadline (String line) throws YiyiException{
+    private static void addDeadline(String line) throws YiyiException{
         if(line.length() <= 8){
             throw new YiyiException("Please use the format: deadline <description> /by <date>");
         }
@@ -125,7 +136,6 @@ public class Yiyi {
         String from = timeParts[0].trim();
         String to = timeParts[1].trim();
 
-
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()){
             throw new YiyiException("Description, start time and end time cannot be empty.");
         }
@@ -149,7 +159,6 @@ public class Yiyi {
             }
         }
         System.out.println(LINE);
-
     }
 
     private static void markTask(String line) throws YiyiException{
@@ -168,7 +177,7 @@ public class Yiyi {
 
             System.out.println(LINE);
             System.out.println("Nice! I've marked this task as done: ");
-            System.out.println(" " + task);
+            System.out.println("  " + task);
             System.out.println(LINE);
         } catch (NumberFormatException e){
             throw new YiyiException("Please enter a valid task number! Example: mark <task number>");
@@ -176,7 +185,7 @@ public class Yiyi {
     }
 
     private static void unmarkTask(String line) throws YiyiException{
-        try{
+        try {
             int taskNumber = Integer.parseInt(line.substring(7).trim());
 
             if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -191,16 +200,15 @@ public class Yiyi {
 
             System.out.println(LINE);
             System.out.println("OK, I've marked this task as not done yet: ");
-            System.out.println(" " + task);
+            System.out.println("  " + task);
             System.out.println(LINE);
         } catch (NumberFormatException e){
-            throw new YiyiException("Please enter a valid task number! Example: mark <task number>");
+            throw new YiyiException("Please enter a valid task number! Example: unmark <task number>");
         }
     }
-
-    private static void deleteTask(String line) throws YiyiException
-    {
-        try{
+    
+    private static void deleteTask(String line) throws YiyiException {
+        try {
             int taskNumber = Integer.parseInt(line.substring(7).trim());
 
             if(taskNumber < 1 || taskNumber > tasks.size()){
@@ -213,9 +221,9 @@ public class Yiyi {
             System.out.println(LINE);
             System.out.println("Noted. I've removed this task:");
             System.out.println("  " + removedTask);
-            System.out.println("Now you have " + tasks.size() + " tasks in the list");
+            System.out.println("Now you have " + tasks.size() + " tasks in the list.");
             System.out.println(LINE);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e){
             throw new YiyiException("Please enter a valid task number! Example: delete <task number>");
         }
     }
