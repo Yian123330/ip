@@ -7,13 +7,27 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Handles loading and saving tasks to a file for persistent storage.
+ */
 public class Storage {
     private String filePath;
 
+    /**
+     * Constructs a Storage object with the specified file path.
+     *
+     * @param filePath The path to the file where tasks are stored.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Saves the given list of tasks to the storage file.
+     *
+     * @param tasks The list of tasks to save.
+     * @throws YiyiException If there is an error writing to the file.
+     */
     public void save(ArrayList<Task> tasks) throws YiyiException {
         try {
             Path dataPath = Paths.get("./data");
@@ -31,6 +45,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Loads tasks from the storage file.
+     *
+     * @return An ArrayList of tasks loaded from the file.
+     * @throws YiyiException If there is an error reading the file or parsing its contents.
+     */
     public ArrayList<Task> load() throws YiyiException {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = new File(filePath);
@@ -53,6 +73,12 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Converts a Task object to a string format suitable for file storage.
+     *
+     * @param task The task to convert.
+     * @return A string representation of the task for file storage.
+     */
     private String taskToFileString(Task task) {
         StringBuilder sb = new StringBuilder();
 
@@ -76,6 +102,13 @@ public class Storage {
         return sb.toString();
     }
 
+    /**
+     * Converts a string from the storage file back into a Task object.
+     *
+     * @param line The line read from the storage file.
+     * @return The Task object represented by the line.
+     * @throws YiyiException If the line format is invalid or corrupted.
+     */
     private Task fileStringToTask(String line) throws YiyiException {
         String[] parts = line.split(" \\| ");
         String type = parts[0];
