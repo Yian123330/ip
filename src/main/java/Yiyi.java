@@ -206,7 +206,7 @@ public class Yiyi {
             throw new YiyiException("Please enter a valid task number! Example: unmark <task number>");
         }
     }
-    
+
     private static void deleteTask(String line) throws YiyiException {
         try {
             int taskNumber = Integer.parseInt(line.substring(7).trim());
