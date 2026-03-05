@@ -22,6 +22,8 @@ public class Parser {
             return new AddDeadlineCommand(arguments);
         case "event":
             return new AddEventCommand(arguments);
+        case "find":
+            return new FindCommand(arguments);
         default:
             throw new YiyiException("I'm sorry, but I don't know what that means.");
         }
