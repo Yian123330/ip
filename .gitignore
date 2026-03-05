@@ -1,14 +1,18 @@
-"# Compiled class files" 
-"*.class" 
-"" 
-"# Package files" 
-"*.jar" 
-"" 
-"# Data files" 
-"data/" 
-"" 
-"# Manifest file" 
-"manifest.txt" 
-"" 
-"# Temporary files" 
-"dir" 
+# IDE files
+.idea/
+*.iml
+out/
+
+# Compiled files
+*.class
+src/main/java/*.class
+
+# Build artifacts
+*.jar
+
+# User data
+data/
+
+# Temporary files
+dir
+manifest.txt
