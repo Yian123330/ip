@@ -8,54 +8,65 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Storage {
-    private static final String FILE_PATH = "./data/yiyi.txt";
+    private String filePath;
 
-    public static void saveTasks(ArrayList<Task> tasks) throws IOException {
-        Path dataPath = Paths.get("./data");
-        if(!Files.exists(dataPath)){
-            Files.createDirectories(dataPath);
-        }
-
-        FileWriter writer = new FileWriter(FILE_PATH);
-        for (Task task : tasks){
-            writer.write(taskToFileString(task) + "\n");
-        }
-        writer.close();
+    public Storage(String filePath) {
+        this.filePath = filePath;
     }
 
-    public static ArrayList<Task> loadTasks() throws IOException, YiyiException {
-        ArrayList<Task> tasks = new ArrayList<>();
-        File file = new File(FILE_PATH);
+    public void save(ArrayList<Task> tasks) throws YiyiException {
+        try {
+            Path dataPath = Paths.get("./data");
+            if (!Files.exists(dataPath)) {
+                Files.createDirectories(dataPath);
+            }
 
-        if(!file.exists()){
+            FileWriter writer = new FileWriter(filePath);
+            for (Task task : tasks) {
+                writer.write(taskToFileString(task) + "\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            throw new YiyiException("Error saving tasks: " + e.getMessage());
+        }
+    }
+
+    public ArrayList<Task> load() throws YiyiException {
+        ArrayList<Task> tasks = new ArrayList<>();
+        File file = new File(filePath);
+
+        if (!file.exists()) {
             return tasks;
         }
-        Scanner scanner = new Scanner(file);
-        while(scanner.hasNextLine()){
-            String line = scanner.nextLine().trim();
-            if (!line.isEmpty()){
-                Task task = fileStringToTask(line);
-                tasks.add(task);
+
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine().trim();
+                if (!line.isEmpty()) {
+                    Task task = fileStringToTask(line);
+                    tasks.add(task);
+                }
             }
+        } catch (IOException e) {
+            throw new YiyiException("Error loading tasks: " + e.getMessage());
         }
-        scanner.close();
         return tasks;
     }
 
-    private static String taskToFileString(Task task){
+    private String taskToFileString(Task task) {
         StringBuilder sb = new StringBuilder();
 
-        if(task instanceof Todo){
+        if (task instanceof Todo) {
             sb.append("T | ");
-            sb.append(task.isDone() ? "1" : "0" ).append(" | ");
+            sb.append(task.isDone() ? "1" : "0").append(" | ");
             sb.append(task.getDescription());
-        }else if (task instanceof Deadline) {
+        } else if (task instanceof Deadline) {
             Deadline deadline = (Deadline) task;
             sb.append("D | ");
             sb.append(task.isDone() ? "1" : "0").append(" | ");
             sb.append(task.getDescription()).append(" | ");
             sb.append(deadline.by);
-        }else if(task instanceof Event){
+        } else if (task instanceof Event) {
             Event event = (Event) task;
             sb.append("E | ");
             sb.append(task.isDone() ? "1" : "0").append(" | ");
@@ -65,25 +76,25 @@ public class Storage {
         return sb.toString();
     }
 
-    private static Task fileStringToTask(String line) throws YiyiException{
+    private Task fileStringToTask(String line) throws YiyiException {
         String[] parts = line.split(" \\| ");
         String type = parts[0];
         boolean isDone = parts[1].equals("1");
         String description = parts[2];
 
         Task task;
-        switch(type){
+        switch (type) {
         case "T":
             task = new Todo(description);
             break;
         case "D":
-            if (parts.length < 4){
+            if (parts.length < 4) {
                 throw new YiyiException("Corrupted deadline data: " + line);
             }
             task = new Deadline(description, parts[3]);
             break;
         case "E":
-            if(parts.length < 5){
+            if (parts.length < 5) {
                 throw new YiyiException("Corrupted event data: " + line);
             }
             task = new Event(description, parts[3], parts[4]);
@@ -91,7 +102,7 @@ public class Storage {
         default:
             throw new YiyiException("Unknown task type: " + type);
         }
-        if(isDone){
+        if (isDone) {
             task.markAsDone();
         }
         return task;
