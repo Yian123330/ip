@@ -83,4 +83,17 @@ public class Ui {
         System.out.println("Could not load tasks from file. Starting with empty list.");
         showLine();
     }
+
+    public void showFindResults(ArrayList<Task> matchingTasks, String keyword) {
+        showLine();
+        if (matchingTasks.isEmpty()) {
+            System.out.println("No tasks found matching \"" + keyword + "\".");
+        } else {
+            System.out.println("Here are the matching tasks in your list:");
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                System.out.println((i + 1) + ". " + matchingTasks.get(i));
+            }
+        }
+        showLine();
+    }
 }
