@@ -4,7 +4,7 @@ public class AddTodoCommand extends Command {
     public AddTodoCommand(String arguments) throws YiyiException {
         this.description = arguments.trim();
         if (description.isEmpty()) {
-            throw new YiyiException("The description of a Todo cannot be empty.");
+            throw new YiyiException("The description of a Todo cannot be empty!");
         }
     }
 

@@ -5,7 +5,7 @@ public class FindCommand extends Command {
 
     public FindCommand(String arguments) throws YiyiException {
         if (arguments.trim().isEmpty()) {
-            throw new YiyiException("The keyword cannot be empty. Usage: find <keyword>");
+            throw new YiyiException("The keyword cannot be empty! Usage: find <keyword>");
         }
         this.keyword = arguments.trim().toLowerCase();
     }

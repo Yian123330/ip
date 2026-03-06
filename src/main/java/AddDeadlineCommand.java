@@ -10,7 +10,7 @@ public class AddDeadlineCommand extends Command {
         this.description = parts[0].trim();
         this.by = parts[1].trim();
         if (description.isEmpty() || by.isEmpty()) {
-            throw new YiyiException("Description and deadline cannot be empty.");
+            throw new YiyiException("Description and deadline cannot be empty!");
         }
     }
 
