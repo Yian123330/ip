@@ -17,7 +17,7 @@ public class AddEventCommand extends Command {
         this.to = timeParts[1].trim();
 
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            throw new YiyiException("Description, start time and end time cannot be empty.");
+            throw new YiyiException("Description, start time and end time cannot be empty!");
         }
     }
 
