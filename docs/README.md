@@ -5,9 +5,9 @@ Yiyi is a **desktop app for managing your tasks, optimized for use via a Command
 ## Quick Start
 
 1.  **Ensure you have Java `17` or above installed** on your computer.
-2.  **Download the latest `.jar` file** from [here].
+2.  **Download the latest `ip.jar` file** from [here](https://github.com/Yian123330/ip/releases).
 3.  **Copy the file** to the folder you want to use as the home folder for Yiyi.
-4.  **Open a command terminal**, `cd` into the folder you put the jar file in, and use the `java -jar Yiyi.jar` command to run the application.
+4.  **Open a command terminal**, `cd` into the folder you put the jar file in, and use the `java -jar ip.jar` command to run the application.
 5.  **Type a command** in the terminal and press Enter to execute it.
     - Example: `list` shows all your tasks.
     - Example: `todo read book` adds a new todo task.
